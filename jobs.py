@@ -1,37 +1,28 @@
 import streamlit as st
-from google.auth import default
+import requests 
 
-# Import Talent API client 
-from google.cloud import talent_v4 as talent
-from google.cloud.talent_v4 import enums
-from google.cloud.talent_v4 import types
+st.title('Job Search')
 
-# Page config
-st.set_page_config(page_title='Job Search', page_icon=':mag:')
+companies = st.multiselect('Select Companies', ['Google', 'Facebook', 'Microsoft'])
 
-# Title  
-st.title('Job Search App')
+API_KEY = 'AIzaSyAuFskRWKMFZailNaCf02sAfnbqz9IP3JE'  # Consider moving this to a secure location
 
-# Company input
-company = st.text_input('Enter a company name to search jobs') 
+url = 'https://jobs.googleapis.com/v2/jobs/search' 
 
-if company:
-
-  # GCP Credentials
-  creds, _ = default()
-
-  # Initialize client
-  client = talent.JobServiceClient(credentials=creds)
-
-  # Build request
-  request = talent.ListJobsRequest(
-      parent='projects/my-project/tenants/my-tenant',
-      filter=f'companyName="{company}"'
-  )
-
-  # Call API
-  response = client.list_jobs(request=request)
-
-  # Display results
-  for job in response:
-    st.write(f"**{job.job_title}** at {job.company_name}")
+if companies:
+  params = {
+    'q': 'python developer', 
+    'companyNames': ','.join(companies),  
+    'location': 'San Francisco, CA',
+    'key': API_KEY
+  }
+else:
+  params = {
+    'q': 'python developer',  
+    'location': 'San Francisco, CA',
+    'key': API_KEY
+  }
+  
+try:
+    response = requests.get(url, params=params)
+    response.raise_for
