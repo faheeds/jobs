@@ -4,3 +4,4 @@ pandas
 pydeck
 streamlit
 google-cloud-talent
+oauth2client
