@@ -1,19 +1,5 @@
 import streamlit as st
 import requests 
-from oauth2client.client import GoogleCredentials
-
-def get_access_token():
-    credentials_data = {
-        "project_id": st.secrets["google"]["project_id"],
-        "client_secret": st.secrets["google"]["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"],
-        "client_id": st.secrets["google"]["client_id"],
-        "auth_uri": st.secrets["google"]["auth_uri"],
-        "token_uri": st.secrets["google"]["token_uri"],
-    }
-    
-    credentials = GoogleCredentials.from_stream(credentials_data)
-    credentials = credentials.create_scoped(['https://www.googleapis.com/auth/cloud-platform'])
-    return credentials.get_access_token().access_token
 
 st.title('Job Search')
 
@@ -21,26 +7,26 @@ companies = st.multiselect('Select Companies', ['Google', 'Facebook', 'Microsoft
 
 url = 'https://jobs.googleapis.com/v2/jobs/search' 
 
+API_KEY = st.secrets["google"]["api_key"]  # Make sure you have added "api_key" in your secrets.toml under [google]
+
 if st.button("Search Jobs"):
-    
-    headers = {
-        'Authorization': f'Bearer {get_access_token()}'
-    }
     
     if companies:
         params = {
             'q': 'python developer', 
             'companyNames': ','.join(companies),  
-            'location': 'San Francisco, CA'
+            'location': 'San Francisco, CA',
+            'key': API_KEY  # The API key is sent as a parameter in the request
         }
     else:
         params = {
             'q': 'python developer',  
-            'location': 'San Francisco, CA'
+            'location': 'San Francisco, CA',
+            'key': API_KEY  # The API key is sent as a parameter in the request
         }
       
     try:
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, params=params)
         response.raise_for_status()
 
         data = response.json()
