@@ -40,4 +40,8 @@ if st.button("Search Jobs"):
         if 'jobs' in data:
             for job in data['jobs']:
                 st.write(job['title'], job['company'], job['location'])
-       
+        else:
+            st.write("No jobs found.")
+
+    except requests.exceptions.RequestException as e:
+        st.write(f"An error occurred: {e}")
